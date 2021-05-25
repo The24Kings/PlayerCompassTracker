@@ -1,6 +1,5 @@
 package compass.tracker;
 
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
