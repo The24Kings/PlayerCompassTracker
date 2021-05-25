@@ -1,4 +1,4 @@
-# PlayerCompassTracker
+# PlayerCompassTracker for PaperMC
 Use compasses to hunt down your friends!
 
 # How to use
