@@ -39,4 +39,12 @@ public class Compass {
 
         hunter.sendMessage(ChatColor.DARK_GREEN + "Successfully tracked: " + ChatColor.RESET + prey.getName());
     }
+
+    public static boolean isRunning() {
+        return running;
+    }
+
+    public static void toggle() {
+        running = !running;
+    }
 }
