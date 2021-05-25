@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-//TODO Change this to check when the prey is moving and hunter is holding a compass to update the CompassMeta
+//TODO Change this to check every 20 ticks for when the prey is moving while the hunter is holding a compass to update the CompassMeta
 public class PlayerEventHandler implements Listener {
     @EventHandler
     public void onUpdateCompass(PlayerInteractEvent event) {
