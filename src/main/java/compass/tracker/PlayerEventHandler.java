@@ -17,6 +17,10 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+//todo play the totem of undying effects on the player who is being tracked and tell them to RUN
+//todo add in GUI of players heads to choose from, excluding your own
+//todo add in a scoreboard above the tracked player's head that show a red skull
+
 public class PlayerEventHandler implements Listener {
     @EventHandler
     public void onUpdateCompass(PlayerInteractEvent event) {
