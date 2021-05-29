@@ -1,7 +1,6 @@
 package compass.tracker;
 
 import compass.tracker.commands.TrackerCommandHandler;
-import compass.tracker.commands.TrackerTabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +28,5 @@ public final class CompassTracker extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GUIHandler(), plugin);
 
         getCommand("hunt").setExecutor(new TrackerCommandHandler());
-        getCommand("hunt").setTabCompleter(new TrackerTabCompleter());
     }
 }

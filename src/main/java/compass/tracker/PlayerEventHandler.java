@@ -17,8 +17,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-//todo play the totem of undying effects on the player who is being tracked and tell them to RUN
-
 public class PlayerEventHandler implements Listener {
     @EventHandler
     public void onUpdateCompass(PlayerInteractEvent event) {
