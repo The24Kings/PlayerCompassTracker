@@ -63,7 +63,11 @@ public class GUIHandler implements Listener {
             if (event.getClickedInventory().getType().equals(InventoryType.CHEST) && event.getCurrentItem().getItemMeta().hasDisplayName()) {
                 try {
                     Player clickedPlayer = Bukkit.getPlayer(PlainComponentSerializer.plain().serialize(event.getCurrentItem().getItemMeta().displayName()));
-                    Compass.giveCompass(player, clickedPlayer);
+                    for(Player online : Bukkit.getServer().getOnlinePlayers()) {
+                        if(!player.equals(clickedPlayer)) {
+                            Compass.giveCompass(player, clickedPlayer);
+                        }
+                    }
                     EffectsUtil.startHunt(clickedPlayer);
                     clickedPlayer.sendMessage(ChatColor.RED + "You have been Chosen...");
                     clickedPlayer.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "RUN");
