@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-//todo add pages to the list of player to increase to allotted amount fo players
+//todo add pages to the list of player to increase to allotted amount of players
 public class GUIHandler implements Listener {
     private static final Component guiName = Component.text("Who would you like to hunt?");
 
@@ -64,6 +64,9 @@ public class GUIHandler implements Listener {
                 try {
                     Player clickedPlayer = Bukkit.getPlayer(PlainComponentSerializer.plain().serialize(event.getCurrentItem().getItemMeta().displayName()));
                     Compass.giveCompass(player, clickedPlayer);
+                    EffectsUtil.startHunt(clickedPlayer);
+                    clickedPlayer.sendMessage(ChatColor.RED + "You have been Chosen...");
+                    clickedPlayer.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "RUN");
                 } catch (NullPointerException exception) {
                     player.sendMessage(ChatColor.RED + "That player could not be found");
                 }
