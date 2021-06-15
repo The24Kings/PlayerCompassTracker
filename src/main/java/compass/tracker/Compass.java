@@ -10,12 +10,9 @@ import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class Compass {
-    public static boolean running = false;
     public static UUID prey = null;
 
     private static ItemStack getCompass(Player player) {
@@ -66,14 +63,6 @@ public class Compass {
                 }
             }
         }.runTaskAsynchronously(CompassTracker.getPlugin());
-    }
-
-    public static void toggle() {
-        running = !running;
-    }
-
-    public static boolean isRunning() {
-        return running;
     }
 
     public static void addPrey(Player player) {
