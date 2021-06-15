@@ -16,11 +16,17 @@ public class EffectsUtil {
         new BukkitRunnable() {
             @Override
             public void run() {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 5, 5));
+            }
+        }.runTaskLater(CompassTracker.getPlugin(),5);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
                 for(PotionEffect effect : player.getActivePotionEffects())
                 {
                     player.removePotionEffect(effect.getType());
                 }
             }
-        }.runTaskLater(CompassTracker.getPlugin(),5);
+        }.runTaskLater(CompassTracker.getPlugin(),10);
     }
 }

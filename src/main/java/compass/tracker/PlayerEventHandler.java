@@ -9,13 +9,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+
+//todo add a win/ loose condition (if prey dies, hunters win, if the prey meets a win condition, prey wins)
+//todo on death give hunter back their compass
+
+// TODO Win conditions - Reach the Nether, Reach the End, Kill the Ender Dragon, Kill all hunters at least once, Survive 24 days, Get a diamond
 
 public class PlayerEventHandler implements Listener {
     @EventHandler
@@ -37,9 +44,16 @@ public class PlayerEventHandler implements Listener {
                             event.getItem().setItemMeta(compassMeta);
                             player.sendMessage(ChatColor.DARK_GREEN + "Updated location of " + ChatColor.RESET + PlainComponentSerializer.plain().serialize(prey.displayName()));
                         } else player.sendMessage(ChatColor.RED + "Cannot track yourself!");
-                    } else CompassTracker.getPlugin().getLogger().severe(ChatColor.DARK_RED + "Could not find player!");
+                    } else player.sendMessage(ChatColor.DARK_RED + "Could not find player!");
                 } else CompassTracker.getPlugin().getLogger().severe(ChatColor.RED + "Error finding your prey, please try /hunt again!");
             }
+        }
+    }
+
+    @EventHandler
+    public void onHunterRespawn(PlayerRespawnEvent event) {
+        if(Compass.getPrey() != null && !event.getPlayer().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
+            Compass.giveCompass(event.getPlayer(), Bukkit.getServer().getPlayer(Compass.getPrey()));
         }
     }
 
@@ -58,22 +72,14 @@ public class PlayerEventHandler implements Listener {
                 Player prey = Bukkit.getPlayerExact(data.get(new NamespacedKey(CompassTracker.getPlugin(), "player"), PersistentDataType.STRING));
 
                 if (prey != null && prey.isOnline()) {
-                    /* Checks if Scheduled task is already running */
-                    if(!Compass.isRunning()) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                Compass.toggle(); //Toggle runnable on
-                                if (!event.getPlayer().equals(prey) && event.getTo() != event.getFrom()) {
-                                    compassMeta.setLodestone(prey.getLocation());
-                                    held.setItemMeta(compassMeta);
-                                    //CompassTracker.getPlugin().getLogger().info(ChatColor.GREEN + "Now pointing to: " + ChatColor.GOLD + prey.getName() + ChatColor.RESET + " at [" + prey.getLocation().getX() + ", " + prey.getLocation().getY() + ", " + prey.getLocation().getZ() + "]");
-                                }
-                            }
-                        }.runTaskLater(CompassTracker.getPlugin(), delay);
-                        Compass.toggle(); //Toggle runnable off
-                    }
-                } else CompassTracker.getPlugin().getLogger().severe(ChatColor.DARK_RED + "Could not find player!");
+                    Bukkit.getScheduler().runTaskTimer(CompassTracker.getPlugin(), () -> { //Funky Lambda Laurie suggested
+                        if (!event.getPlayer().equals(prey) && event.getTo() != event.getFrom()) {
+                            compassMeta.setLodestone(prey.getLocation());
+                            held.setItemMeta(compassMeta);
+                            //CompassTracker.getPlugin().getLogger().info(ChatColor.GREEN + "Now pointing to: " + ChatColor.GOLD + prey.getName() + ChatColor.RESET + " at [" + prey.getLocation().getX() + ", " + prey.getLocation().getY() + ", " + prey.getLocation().getZ() + "]");
+                        }
+                    }, delay,0);
+                } //else CompassTracker.getPlugin().getLogger().severe(ChatColor.DARK_RED + "Could not find player!");
             } else CompassTracker.getPlugin().getLogger().severe(ChatColor.RED + "Error finding your prey, please try /hunt again!");
         }
     }

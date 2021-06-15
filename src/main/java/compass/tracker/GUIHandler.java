@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 //todo add pages to the list of player to increase to allotted amount of players
+//todo add check for players in survival and alive
 public class GUIHandler implements Listener {
     private static final Component guiName = Component.text("Who would you like to hunt?");
 
@@ -64,11 +65,14 @@ public class GUIHandler implements Listener {
                 try {
                     Player clickedPlayer = Bukkit.getPlayer(PlainComponentSerializer.plain().serialize(event.getCurrentItem().getItemMeta().displayName()));
                     for(Player online : Bukkit.getServer().getOnlinePlayers()) {
-                        if(!player.equals(clickedPlayer)) {
-                            Compass.giveCompass(player, clickedPlayer);
+                        if(!online.equals(clickedPlayer)) {
+                            Compass.clearInv();
+                            Compass.giveCompass(online, clickedPlayer);
                         }
                     }
+                    assert clickedPlayer != null;
                     EffectsUtil.startHunt(clickedPlayer);
+                    Compass.addPrey(clickedPlayer);
                     clickedPlayer.sendMessage(ChatColor.RED + "You have been Chosen...");
                     clickedPlayer.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "RUN");
                 } catch (NullPointerException exception) {
