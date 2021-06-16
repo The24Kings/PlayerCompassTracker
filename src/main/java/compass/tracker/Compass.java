@@ -1,7 +1,6 @@
 package compass.tracker;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -9,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
 import java.util.UUID;
 
 public class Compass {
@@ -44,27 +42,6 @@ public class Compass {
         hunter.sendMessage(ChatColor.DARK_GREEN + "Successfully tracked: " + ChatColor.RESET + prey.getName());
     }
 
-    //TODO FIX - does not clear inv
-    public static void clearInv() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for(Player online : Bukkit.getOnlinePlayers()) {
-                    Inventory inventory = online.getInventory();
-                    online.sendMessage("hi");
-                    for (ItemStack item : inventory.getContents()) {
-                        if (item != null && !item.getItemMeta().hasDisplayName()) return;
-                        online.sendMessage("hi 2");
-                        if (item.getType().equals(Material.COMPASS) && PlainComponentSerializer.plain().serialize(item.getItemMeta().displayName()).contains("Tracker")) {
-                            online.sendMessage("cleared Inv!");
-                            item.setType(Material.AIR);
-                        }
-                    }
-                }
-            }
-        }.runTaskAsynchronously(CompassTracker.getPlugin());
-    }
-
     public static void addPrey(Player player) {
         prey = player.getUniqueId();
     }
@@ -73,6 +50,14 @@ public class Compass {
         return prey;
     }
 
+    public static void clearInv() {
+        Bukkit.getScheduler().runTaskAsynchronously(CompassTracker.getPlugin(), () -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                Inventory inventory = player.getInventory();
+                inventory.clear();
+            }
+        });
+    }
     public static void reset() {
         prey = null;
     }

@@ -13,9 +13,15 @@ public class TrackerCommandHandler implements CommandExecutor {
         if (!(sender instanceof Player)) return true;
         Player player = (Player) sender;
 
-        if (label.equalsIgnoreCase("hunt")) {
+        if (args.length == 0 && label.equalsIgnoreCase("hunt")) {
             Compass.reset();
             GUIHandler.openGUI(player);
+        }
+
+        if(args.length != 0) {
+            if(args[0].equals("cancel")) {
+                Compass.reset();
+            }
         }
         return true;
     }

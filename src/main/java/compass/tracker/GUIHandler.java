@@ -13,7 +13,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 //todo add pages to the list of player to increase to allotted amount of players
 //todo add check for players in survival and alive
@@ -35,23 +34,21 @@ public class GUIHandler implements Listener {
         Inventory gui = Bukkit.createInventory(player, guiSize, guiName);
 
         //Run task asynchronously to reduce lag on larger player sets
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Player playerI : player.getWorld().getPlayers()) {
-                    if (!playerI.getName().equals(player.getName())) {
-                        ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
-                        SkullMeta headMeta = (SkullMeta) head.getItemMeta();
+        Bukkit.getScheduler().runTaskAsynchronously(CompassTracker.getPlugin(), () -> {
+            for (Player playerI : player.getWorld().getPlayers()) {
+                if (!playerI.getName().equals(player.getName())) {
+                    ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
+                    SkullMeta headMeta = (SkullMeta) head.getItemMeta();
 
-                        headMeta.displayName(Component.text(playerI.getName()));
-                        headMeta.setOwningPlayer(playerI);
-                        head.setItemMeta(headMeta);
-                        gui.addItem(head);
-                    }
+                    headMeta.displayName(Component.text(playerI.getName()));
+                    headMeta.setOwningPlayer(playerI);
+                    head.setItemMeta(headMeta);
+                    gui.addItem(head);
                 }
             }
-        }.runTaskAsynchronously(CompassTracker.getPlugin());
+        });
         player.openInventory(gui);
+        Compass.clearInv();
     }
 
     @EventHandler
@@ -66,7 +63,6 @@ public class GUIHandler implements Listener {
                     Player clickedPlayer = Bukkit.getPlayer(PlainComponentSerializer.plain().serialize(event.getCurrentItem().getItemMeta().displayName()));
                     for(Player online : Bukkit.getServer().getOnlinePlayers()) {
                         if(!online.equals(clickedPlayer)) {
-                            Compass.clearInv();
                             Compass.giveCompass(online, clickedPlayer);
                         }
                     }
