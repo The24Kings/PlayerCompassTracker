@@ -1,7 +1,6 @@
 package compass.tracker;
 
 import com.connorlinfoot.titleapi.TitleAPI;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
