@@ -64,7 +64,7 @@ public class PlayerEventHandler implements Listener {
             Compass.reset();
             Compass.clearInv();
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                TitleAPI.sendTitle(player,10,20*3,10,ChatColor.GOLD + "" + ChatColor.BOLD + "HUNTERS WIN",""); //(fadeIn, fadeOut, stay) - in ticks
+                TitleAPI.sendTitle(player,10,20*3,10,ChatColor.GOLD + "" + ChatColor.BOLD + "HUNTERS WIN",""); //(fadeIn, stay, fadeOut) - in ticks
             }
         }
     }
