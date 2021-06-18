@@ -1,9 +1,11 @@
 package compass.tracker;
 
+import com.connorlinfoot.titleapi.TitleAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,7 +38,7 @@ public class GUIHandler implements Listener {
         //Run task asynchronously to reduce lag on larger player sets
         Bukkit.getScheduler().runTaskAsynchronously(CompassTracker.getPlugin(), () -> {
             for (Player playerI : player.getWorld().getPlayers()) {
-                if (!playerI.getName().equals(player.getName())) {
+                if (!playerI.getName().equals(player.getName()) && playerI.getGameMode().equals(GameMode.SURVIVAL)) {
                     ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
                     SkullMeta headMeta = (SkullMeta) head.getItemMeta();
 
@@ -69,8 +71,9 @@ public class GUIHandler implements Listener {
                     assert clickedPlayer != null;
                     EffectsUtil.startHunt(clickedPlayer);
                     Compass.addPrey(clickedPlayer);
-                    clickedPlayer.sendMessage(ChatColor.RED + "You have been Chosen...");
-                    clickedPlayer.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "RUN");
+                    TitleAPI.sendTitle(clickedPlayer,10,20*3,10,
+                            ChatColor.RED + "You have been Chosen...",
+                            ChatColor.DARK_RED + "" + ChatColor.BOLD + "RUN");
                 } catch (NullPointerException exception) {
                     player.sendMessage(ChatColor.RED + "That player could not be found");
                 }

@@ -5,9 +5,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.CompassMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.inventory.meta.ItemMeta;
+
 import java.util.UUID;
 
 public class Compass {
@@ -15,15 +14,10 @@ public class Compass {
 
     private static ItemStack getCompass(Player player) {
         ItemStack compass = new ItemStack(Material.COMPASS);
-        CompassMeta compassMeta = (CompassMeta) compass.getItemMeta();
+        ItemMeta compassMeta = compass.getItemMeta();
 
-        //Adds 'player' custom tag to the compass for currently tracked player (Thanks https://github.com/Rayn322)
-        PersistentDataContainer data = compassMeta.getPersistentDataContainer();
-        data.set(new NamespacedKey(CompassTracker.getPlugin(), "player"), PersistentDataType.STRING, player.getName());
-
-        compassMeta.setLodestoneTracked(false);
-        compassMeta.setLodestone(player.getLocation());
         compassMeta.displayName(Component.text(ChatColor.GOLD + player.getName() + ChatColor.RESET + " Tracker"));
+
         compass.setItemMeta(compassMeta);
 
         return compass;
@@ -51,13 +45,23 @@ public class Compass {
     }
 
     public static void clearInv() {
+        ItemStack replace = new ItemStack(Material.AIR);
         Bukkit.getScheduler().runTaskAsynchronously(CompassTracker.getPlugin(), () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                Inventory inventory = player.getInventory();
-                inventory.clear();
+                if(!player.equals(Bukkit.getPlayer(Compass.getPrey()))) {
+                    Inventory inventory = player.getInventory();
+                    if (!inventory.isEmpty()) {
+                        for (int item = 0; item < inventory.getSize(); item++) {
+                            if (inventory.getItem(item) != null && inventory.getItem(item).getType().equals(Material.COMPASS)) {
+                                inventory.setItem(item, replace);
+                            }
+                        }
+                    }
+                }
             }
         });
     }
+
     public static void reset() {
         prey = null;
     }

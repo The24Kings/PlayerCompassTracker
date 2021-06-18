@@ -1,46 +1,53 @@
 package compass.tracker;
 
+import com.connorlinfoot.titleapi.TitleAPI;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.meta.CompassMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.inventory.ItemStack;
 
-// TODO Win conditions - Reach the Nether, Reach the End, Kill the Ender Dragon, Kill all hunters at least once, Survive 24 days, Get a diamond
-
+// TODO Win conditions - Reach the Nether, Reach the End, Kill the Ender Dragon, Kill all hunters at least once, Get a diamond
 public class PlayerEventHandler implements Listener {
     @EventHandler
-    public void onUpdateCompass(PlayerInteractEvent event) {
+    public void getPreyY(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
             if (!event.hasItem() || !event.getItem().getItemMeta().hasDisplayName()) return;
+            Player player = event.getPlayer();
+            Player prey = Bukkit.getPlayer(Compass.getPrey());
 
-            if (event.getMaterial() == Material.COMPASS && PlainComponentSerializer.plain().serialize(event.getItem().getItemMeta().displayName()).contains("Tracker")) {
-                CompassMeta compassMeta = (CompassMeta) event.getItem().getItemMeta();
-                PersistentDataContainer data = compassMeta.getPersistentDataContainer();
-                Player player = event.getPlayer();
+            if (prey != null && prey.isOnline()) {
+                player.sendMessage(ChatColor.DARK_GREEN + "Current Y" + ChatColor.RESET + ": " + (int) Math.floor(prey.getLocation().getY()));
+            } else player.sendMessage(ChatColor.DARK_RED + "Could not find player!");
+        }
+    }
 
-                if (data.has(new NamespacedKey(CompassTracker.getPlugin(), "player"), PersistentDataType.STRING)) {
-                    Player prey = Bukkit.getPlayerExact(data.get(new NamespacedKey(CompassTracker.getPlugin(), "player"), PersistentDataType.STRING));
+    //Updates Prey's location while Prey is moving
+    @EventHandler
+    public void updateCompass(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        Player prey = Bukkit.getPlayer(Compass.getPrey());
+        if (prey != null && prey.isOnline()) {
+            if(prey.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
+                player.setCompassTarget(Bukkit.getPlayer(Compass.getPrey()).getLocation());
+            }
+        }
+    }
 
-                    if (prey != null && prey.isOnline()) {
-                        if (!event.getPlayer().equals(prey)) {
-                            compassMeta.setLodestone(prey.getLocation());
-                            event.getItem().setItemMeta(compassMeta);
-                            player.sendMessage(ChatColor.DARK_GREEN + "Updated location of " + ChatColor.RESET + PlainComponentSerializer.plain().serialize(prey.displayName()));
-                        } else player.sendMessage(ChatColor.RED + "Cannot track yourself!");
-                    } else player.sendMessage(ChatColor.DARK_RED + "Could not find player!");
-                } else CompassTracker.getPlugin().getLogger().severe(ChatColor.RED + "Error finding your prey, please try /hunt again!");
+    //Doesn't allow Prey to pickup Compass
+    @EventHandler
+    public void compassPickup(PlayerAttemptPickupItemEvent event) {
+        ItemStack item = event.getItem().getItemStack();
+        if(event.getPlayer().equals(Bukkit.getPlayer(Compass.getPrey()))) {
+            if(item.getType().equals(Material.COMPASS) && item.getItemMeta().hasDisplayName()) {
+                event.setCancelled(true);
             }
         }
     }
@@ -48,44 +55,18 @@ public class PlayerEventHandler implements Listener {
     @EventHandler
     public void hunterRespawn(PlayerRespawnEvent event) {
         if(Compass.getPrey() != null && !event.getPlayer().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
-            Compass.giveCompass(event.getPlayer(), Bukkit.getServer().getPlayer(Compass.getPrey()));
+            Compass.giveCompass(event.getPlayer(), Bukkit.getPlayer(Compass.getPrey()));
         }
     }
 
     @EventHandler
-    public void preyDeath(PlayerDeathEvent event) {
+    public void onDeath(PlayerDeathEvent event) {
         if(Compass.getPrey() != null && event.getEntity().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
             Compass.reset();
             Compass.clearInv();
-            event.getEntity().getWorld().sendMessage(Component.text(ChatColor.GOLD + "HUNTERS WIN"));
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                TitleAPI.sendTitle(player,10,20*3,10,ChatColor.GOLD + "" + ChatColor.BOLD + "HUNTERS WIN",""); //(fadeIn, fadeOut, stay) - in ticks
+            }
         }
     }
-/*
-    @EventHandler
-    public void updateCompass(PlayerMoveEvent event) {
-        ItemStack held = event.getPlayer().getInventory().getItemInMainHand();
-        long delay = 20L * 5; /* Seconds delay *
-
-        if (held.getType().equals(Material.AIR) || !held.getItemMeta().hasDisplayName()) return;
-
-        if (held.getType().equals(Material.COMPASS) && PlainComponentSerializer.plain().serialize(held.getItemMeta().displayName()).contains("Tracker")) {
-            CompassMeta compassMeta = (CompassMeta) held.getItemMeta();
-            PersistentDataContainer data = compassMeta.getPersistentDataContainer();
-
-            if (data.has(new NamespacedKey(CompassTracker.getPlugin(), "player"), PersistentDataType.STRING)) {
-                Player prey = Bukkit.getPlayerExact(data.get(new NamespacedKey(CompassTracker.getPlugin(), "player"), PersistentDataType.STRING));
-
-                if (prey != null && prey.isOnline()) {
-                    //Doesnt wait before adding another task, just piles them on top of each other
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CompassTracker.getPlugin(), () -> {
-                        if (!event.getPlayer().equals(prey) && event.getTo() != event.getFrom()) {
-                            compassMeta.setLodestone(prey.getLocation());
-                            held.setItemMeta(compassMeta);
-                            //CompassTracker.getPlugin().getLogger().info(ChatColor.GREEN + "Now pointing to: " + ChatColor.GOLD + prey.getName() + ChatColor.RESET + " at [" + prey.getLocation().getX() + ", " + prey.getLocation().getY() + ", " + prey.getLocation().getZ() + "]");
-                        }
-                    }, delay);
-                } //else CompassTracker.getPlugin().getLogger().severe(ChatColor.DARK_RED + "Could not find player!");
-            } else CompassTracker.getPlugin().getLogger().severe(ChatColor.RED + "Error finding your prey, please try /hunt again!");
-        }
-    }*/
 }
