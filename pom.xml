@@ -78,6 +78,7 @@
             <groupId>com.github.ConnorLinfoot</groupId>
             <artifactId>TitleAPI</artifactId>
             <version>1.7.6</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
