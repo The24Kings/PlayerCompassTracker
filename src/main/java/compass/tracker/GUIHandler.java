@@ -53,6 +53,7 @@ public class GUIHandler implements Listener {
         });
         player.openInventory(gui);
         Compass.clearInv();
+        NickUtil.resetPreyNick(Bukkit.getServer().getPlayer(Compass.getPrey()));
     }
 
     @EventHandler

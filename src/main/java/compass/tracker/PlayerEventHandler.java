@@ -61,10 +61,10 @@ public class PlayerEventHandler implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         if(Compass.getPrey() != null && event.getEntity().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
+            NickUtil.resetPreyNick(Bukkit.getServer().getPlayer(Compass.getPrey()));
             Compass.reset();
             Compass.clearInv();
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                NickUtil.resetPreyNick(Bukkit.getServer().getPlayer(Compass.getPrey()));
                 player.sendTitle( //(fadeIn, stay, fadeOut) - in ticks
                         ChatColor.GOLD + "" + ChatColor.BOLD + "HUNTERS WIN",
                         "",
