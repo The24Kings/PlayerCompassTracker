@@ -1,5 +1,6 @@
-package compass.tracker;
+package compass.tracker.utils;
 
+import compass.tracker.CompassTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

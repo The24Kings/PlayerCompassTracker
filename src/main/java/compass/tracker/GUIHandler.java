@@ -1,6 +1,9 @@
 package compass.tracker;
 
-import com.connorlinfoot.titleapi.TitleAPI;
+import compass.tracker.utils.CountdownUtil;
+import compass.tracker.utils.EffectsUtil;
+//import compass.tracker.utils.NickUtil;
+import compass.tracker.utils.NickUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
@@ -17,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 //todo add pages to the list of player to increase to allotted amount of players
-//todo add check for players in survival and alive
 public class GUIHandler implements Listener {
     private static final Component guiName = Component.text("Who would you like to hunt?");
 
@@ -25,9 +27,9 @@ public class GUIHandler implements Listener {
         int playerAmount = player.getWorld().getPlayers().size();
         int guiSize;
 
-        // sets gui to the correct multiple of 9
+        // Sets gui to the correct multiple of 9 (Limit 54)
         if (playerAmount <= 54) {
-            guiSize = playerAmount + (9 - playerAmount % 9); //adds how many more players til full row of 9
+            guiSize = playerAmount + (9 - playerAmount % 9); //Adds how many more players til full row of 9
         } else {
             player.sendMessage("Too many players!");
             return;
@@ -38,7 +40,7 @@ public class GUIHandler implements Listener {
         //Run task asynchronously to reduce lag on larger player sets
         Bukkit.getScheduler().runTaskAsynchronously(CompassTracker.getPlugin(), () -> {
             for (Player playerI : player.getWorld().getPlayers()) {
-                if (!playerI.getName().equals(player.getName()) && playerI.getGameMode().equals(GameMode.SURVIVAL)) {
+                //if (!playerI.getName().equals(player.getName()) && playerI.getGameMode().equals(GameMode.SURVIVAL) && !playerI.isDead()) { //Does not add Prey, Non-survival players and dead players
                     ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
                     SkullMeta headMeta = (SkullMeta) head.getItemMeta();
 
@@ -46,7 +48,7 @@ public class GUIHandler implements Listener {
                     headMeta.setOwningPlayer(playerI);
                     head.setItemMeta(headMeta);
                     gui.addItem(head);
-                }
+                //}
             }
         });
         player.openInventory(gui);
@@ -69,11 +71,16 @@ public class GUIHandler implements Listener {
                         }
                     }
                     assert clickedPlayer != null;
+                    NickUtil.setPreyNick(clickedPlayer);
                     EffectsUtil.startHunt(clickedPlayer);
                     Compass.addPrey(clickedPlayer);
-                    TitleAPI.sendTitle(clickedPlayer,10,20*3,10,
+                    clickedPlayer.sendTitle( //(fadeIn, stay, fadeOut) - in ticks
                             ChatColor.RED + "You have been Chosen...",
-                            ChatColor.DARK_RED + "" + ChatColor.BOLD + "RUN");
+                            ChatColor.DARK_RED + "" + ChatColor.BOLD + "RUN",
+                            10,
+                            20*3,
+                            10);
+                    Bukkit.getScheduler().runTaskLater(CompassTracker.getPlugin(), CountdownUtil::huntCountdown,40); //Waits for Prey's Warning to fade away
                 } catch (NullPointerException exception) {
                     player.sendMessage(ChatColor.RED + "That player could not be found");
                 }

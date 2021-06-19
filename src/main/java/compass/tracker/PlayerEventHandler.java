@@ -1,6 +1,6 @@
 package compass.tracker;
 
-import com.connorlinfoot.titleapi.TitleAPI;
+import compass.tracker.utils.NickUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -64,7 +64,13 @@ public class PlayerEventHandler implements Listener {
             Compass.reset();
             Compass.clearInv();
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                TitleAPI.sendTitle(player,10,20*3,10,ChatColor.GOLD + "" + ChatColor.BOLD + "HUNTERS WIN",""); //(fadeIn, fadeOut, stay) - in ticks
+                NickUtil.resetPreyNick(Bukkit.getServer().getPlayer(Compass.getPrey()));
+                player.sendTitle( //(fadeIn, stay, fadeOut) - in ticks
+                        ChatColor.GOLD + "" + ChatColor.BOLD + "HUNTERS WIN",
+                        "",
+                        10,
+                        20*3,
+                        10);
             }
         }
     }

@@ -62,8 +62,8 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>upstream</id>
+            <url>http://ci.nametagedit.com/plugin/repository/everything/</url>
         </repository>
     </repositories>
 
@@ -75,10 +75,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.ConnorLinfoot</groupId>
-            <artifactId>TitleAPI</artifactId>
-            <version>1.7.6</version>
-            <scope>provided</scope>
+            <groupId>com.nametagedit</groupId>
+            <artifactId>nametagedit</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/Dependencies/NametagEdit.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
