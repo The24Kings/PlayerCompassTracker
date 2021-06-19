@@ -19,6 +19,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.Objects;
+
 //todo add pages to the list of player to increase to allotted amount of players
 public class GUIHandler implements Listener {
     private static final Component guiName = Component.text("Who would you like to hunt?");
@@ -40,7 +42,7 @@ public class GUIHandler implements Listener {
         //Run task asynchronously to reduce lag on larger player sets
         Bukkit.getScheduler().runTaskAsynchronously(CompassTracker.getPlugin(), () -> {
             for (Player playerI : player.getWorld().getPlayers()) {
-                //if (!playerI.getName().equals(player.getName()) && playerI.getGameMode().equals(GameMode.SURVIVAL) && !playerI.isDead()) { //Does not add Prey, Non-survival players and dead players
+                if (!playerI.getName().equals(player.getName()) && playerI.getGameMode().equals(GameMode.SURVIVAL) && !playerI.isDead()) { //Does not add Prey, Non-survival players and dead players
                     ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
                     SkullMeta headMeta = (SkullMeta) head.getItemMeta();
 
@@ -48,12 +50,11 @@ public class GUIHandler implements Listener {
                     headMeta.setOwningPlayer(playerI);
                     head.setItemMeta(headMeta);
                     gui.addItem(head);
-                //}
+                }
             }
         });
         player.openInventory(gui);
         Compass.clearInv();
-        NickUtil.resetPreyNick(Bukkit.getServer().getPlayer(Compass.getPrey()));
     }
 
     @EventHandler
@@ -72,6 +73,7 @@ public class GUIHandler implements Listener {
                         }
                     }
                     assert clickedPlayer != null;
+                    NickUtil.resetPreyNick(Objects.requireNonNull(Bukkit.getServer().getPlayer(Compass.getPrey())));
                     NickUtil.setPreyNick(clickedPlayer);
                     EffectsUtil.startHunt(clickedPlayer);
                     Compass.addPrey(clickedPlayer);
