@@ -18,8 +18,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.Objects;
-
 //todo add pages to the list of player to increase to allotted amount of players
 public class GUIHandler implements Listener {
     private static final Component guiName = Component.text("Who would you like to hunt?");
