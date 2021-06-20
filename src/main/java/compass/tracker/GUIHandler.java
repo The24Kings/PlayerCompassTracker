@@ -2,10 +2,9 @@ package compass.tracker;
 
 import compass.tracker.utils.CountdownUtil;
 import compass.tracker.utils.EffectsUtil;
-//import compass.tracker.utils.NickUtil;
 import compass.tracker.utils.NickUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -53,6 +52,9 @@ public class GUIHandler implements Listener {
                 }
             }
         });
+        if(NickUtil.getNickedPrey() != null) {
+            NickUtil.resetPreyNick();
+        }
         player.openInventory(gui);
         Compass.clearInv();
     }
@@ -66,14 +68,13 @@ public class GUIHandler implements Listener {
 
             if (event.getClickedInventory().getType().equals(InventoryType.CHEST) && event.getCurrentItem().getItemMeta().hasDisplayName()) {
                 try {
-                    Player clickedPlayer = Bukkit.getPlayer(PlainComponentSerializer.plain().serialize(event.getCurrentItem().getItemMeta().displayName()));
+                    Player clickedPlayer = Bukkit.getPlayer(PlainTextComponentSerializer.plainText().serialize(event.getCurrentItem().getItemMeta().displayName()));
                     for(Player online : Bukkit.getServer().getOnlinePlayers()) {
                         if(!online.equals(clickedPlayer)) {
                             Compass.giveCompass(online, clickedPlayer);
                         }
                     }
                     assert clickedPlayer != null;
-                    NickUtil.resetPreyNick(Objects.requireNonNull(Bukkit.getServer().getPlayer(Compass.getPrey())));
                     NickUtil.setPreyNick(clickedPlayer);
                     EffectsUtil.startHunt(clickedPlayer);
                     Compass.addPrey(clickedPlayer);

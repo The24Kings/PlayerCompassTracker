@@ -2,7 +2,7 @@ name: PlayerCompassTracker
 version: ${project.version}
 author: 24Kings
 main: compass.tracker.CompassTracker
-api-version: 1.16
+api-version: 1.17
 
 commands:
   hunt:

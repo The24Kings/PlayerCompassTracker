@@ -60,8 +60,8 @@ public class PlayerEventHandler implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        if(Compass.getPrey() != null && event.getEntity().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
-            NickUtil.resetPreyNick(Bukkit.getServer().getPlayer(Compass.getPrey()));
+        if(NickUtil.getNickedPrey() != null && event.getEntity().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
+            NickUtil.resetPreyNick();
             Compass.reset();
             Compass.clearInv();
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
