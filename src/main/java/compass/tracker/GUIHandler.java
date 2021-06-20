@@ -50,9 +50,7 @@ public class GUIHandler implements Listener {
                 }
             }
         });
-        if(NickUtil.getNickedPrey() != null) {
-            NickUtil.resetPreyNick();
-        }
+        NickUtil.resetPreyNick();
         player.openInventory(gui);
         Compass.clearInv();
     }

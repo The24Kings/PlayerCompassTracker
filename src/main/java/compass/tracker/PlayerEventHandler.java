@@ -60,7 +60,7 @@ public class PlayerEventHandler implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        if(NickUtil.getNickedPrey() != null && event.getEntity().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
+        if(event.getEntity().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
             NickUtil.resetPreyNick();
             Compass.reset();
             Compass.clearInv();
@@ -71,6 +71,7 @@ public class PlayerEventHandler implements Listener {
                         10,
                         20*3,
                         10);
+                player.getWorld().playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
             }
         }
     }

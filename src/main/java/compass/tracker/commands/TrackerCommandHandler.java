@@ -2,6 +2,7 @@ package compass.tracker.commands;
 
 import compass.tracker.Compass;
 import compass.tracker.GUIHandler;
+import compass.tracker.utils.NickUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,7 +20,9 @@ public class TrackerCommandHandler implements CommandExecutor {
 
         if(args.length != 0) {
             if(args[0].equals("cancel")) {
+                NickUtil.resetPreyNick();
                 Compass.reset();
+                Compass.clearInv();
             }
         }
         return true;
