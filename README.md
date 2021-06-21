@@ -2,7 +2,7 @@
 Use compasses to hunt down your friends!
 
 # How to use
-Use `/hunt` and click on the desired player to get a compass pointing to their last known location   
+Use `/hunt` and click on the desired player to get a compass pointing to their location   
 Right-click the compass to get the prey's current Y level
 
 # Plans
