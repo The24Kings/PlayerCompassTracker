@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 // TODO Win conditions - Reach the Nether, Reach the End, Kill the Ender Dragon, Kill all hunters at least once, Get a diamond
+//TODO: Add in a glow effect when a player peers into a spyglass :bigbrain:
 public class PlayerEventHandler implements Listener {
     @EventHandler
     public void getPreyY(PlayerInteractEvent event) {
