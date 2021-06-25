@@ -2,17 +2,18 @@ package compass.tracker;
 
 import compass.tracker.utils.NickUtil;
 import org.bukkit.*;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import java.util.ArrayList;
 import java.util.UUID;
 
-// TODO Win conditions - Kill the Ender Dragon
 //TODO: Add in a toggle system for win conditions
 public class WinConditions implements Listener {
 
@@ -109,6 +110,24 @@ public class WinConditions implements Listener {
                 }
                 if(prey.getWorld().getEnvironment().equals(World.Environment.THE_END)) { //Check if entered Dimension is the End
                     Bukkit.getScheduler().runTaskLater(CompassTracker.getPlugin(), WinConditions::preyWin,20);
+                }
+            }
+        }
+    }
+
+    //Prey wins if they kill the Ender Dragon
+    //TODO: Test if this works, i have no clue...
+    @EventHandler
+    public void killEnderDragon(EntityDamageByEntityEvent event) {
+        if(Compass.getPrey() != null) {
+            Entity prey = Bukkit.getPlayer(Compass.getPrey());
+            if(event.getDamager() instanceof Player) {
+                if (event.getEntity() instanceof EnderDragon) {
+                    if(event.getDamager().equals(prey)) {
+                        if (event.getDamage() > ((EnderDragon) event.getEntity()).getHealth()) {
+                            WinConditions.preyWin();
+                        }
+                    }
                 }
             }
         }
