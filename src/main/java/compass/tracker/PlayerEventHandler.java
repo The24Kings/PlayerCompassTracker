@@ -1,6 +1,5 @@
 package compass.tracker;
 
-import compass.tracker.utils.NickUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,7 +12,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-// TODO Win conditions - Reach the Nether, Reach the End, Kill the Ender Dragon, Kill all hunters at least once, Get a diamond
+import java.util.UUID;
+
 //TODO: Add in a glow effect when a player peers into a spyglass :bigbrain:
 public class PlayerEventHandler implements Listener {
     @EventHandler
@@ -52,28 +52,23 @@ public class PlayerEventHandler implements Listener {
         }
     }
 
+    //TODO: Add toggle for "kill all hunters" win condition
     @EventHandler
-    public void hunterRespawn(PlayerRespawnEvent event) {
-        if(Compass.getPrey() != null && !event.getPlayer().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
-            Compass.giveCompass(event.getPlayer(), Bukkit.getPlayer(Compass.getPrey()));
+    public void hunterDeath(PlayerDeathEvent event) {
+        if(Compass.getPrey() != null && !event.getEntity().equals(Bukkit.getPlayer(Compass.getPrey()))) {
+            UUID hunter = event.getEntity().getUniqueId();
+            if(Compass.getAliveHunters().contains(hunter)) {
+                Compass.removeAliveHunter(hunter);
+            }
         }
     }
 
+    //TODO: Check if they are still in the list of "alive" hunters and respawn them accordingly
+    //TODO: Add toggle for "kill all hunters" win condition
     @EventHandler
-    public void onDeath(PlayerDeathEvent event) {
-        if(event.getEntity().equals(Bukkit.getServer().getPlayer(Compass.getPrey()))) {
-            NickUtil.resetPreyNick();
-            Compass.reset();
-            Compass.clearInv();
-            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                player.sendTitle( //(fadeIn, stay, fadeOut) - in ticks
-                        ChatColor.GOLD + "" + ChatColor.BOLD + "HUNTERS WIN",
-                        "",
-                        10,
-                        20*3,
-                        10);
-                player.getWorld().playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-            }
+    public void hunterRespawn(PlayerRespawnEvent event) {
+        if(Compass.getPrey() != null && !event.getPlayer().equals(Bukkit.getPlayer(Compass.getPrey()))) {
+            Compass.giveCompass(event.getPlayer(), Bukkit.getPlayer(Compass.getPrey()));
         }
     }
 }

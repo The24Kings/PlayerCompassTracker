@@ -6,11 +6,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Compass {
     public static UUID prey = null;
+    private static ArrayList<UUID> alive = new ArrayList<>();
 
     private static ItemStack getCompass(Player player) {
         ItemStack compass = new ItemStack(Material.COMPASS);
@@ -24,6 +25,7 @@ public class Compass {
     }
 
     public static void giveCompass(Player hunter, Player prey) {
+        alive = WinConditions.aliveHunters(); //Adds all hunter's UUID's to a list of "alive" hunters
         if(hunter.getInventory().firstEmpty() == -1) {
             Location location = hunter.getLocation();
             World world = hunter.getWorld();
@@ -32,8 +34,6 @@ public class Compass {
         } else {
             hunter.getInventory().addItem(getCompass(prey));
         }
-
-        hunter.sendMessage(ChatColor.DARK_GREEN + "Successfully tracked: " + ChatColor.RESET + prey.getName());
     }
 
     public static void addPrey(Player player) {
@@ -42,6 +42,14 @@ public class Compass {
 
     public static UUID getPrey() {
         return prey;
+    }
+
+    public static ArrayList<UUID> getAliveHunters() {
+        return alive;
+    }
+
+    public static void removeAliveHunter(UUID hunter) {
+        alive.remove(hunter);
     }
 
     public static void clearInv() {
@@ -64,5 +72,6 @@ public class Compass {
 
     public static void reset() {
         prey = null;
+        alive.clear();
     }
 }

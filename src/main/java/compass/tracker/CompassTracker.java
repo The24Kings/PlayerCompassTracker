@@ -27,6 +27,7 @@ public final class CompassTracker extends JavaPlugin {
     private void RegisterCommandsAndEvents () {
         getServer().getPluginManager().registerEvents(new PlayerEventHandler(), plugin);
         getServer().getPluginManager().registerEvents(new GUIHandler(), plugin);
+        getServer().getPluginManager().registerEvents(new WinConditions(), plugin);
 
         getCommand("hunt").setExecutor(new TrackerCommandHandler());
         getCommand("hunt").setTabCompleter(new TrackerTabCompleter());
