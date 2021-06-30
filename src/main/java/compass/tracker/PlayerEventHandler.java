@@ -5,16 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.UUID;
-
-//TODO: Add in a glow effect when a player peers into a spyglass :bigbrain:
+//TODO: Add in a glow effect to the prey when a player peers into a spyglass :bigbrain:
 public class PlayerEventHandler implements Listener {
     @EventHandler
     public void getPreyY(PlayerInteractEvent event) {
@@ -52,23 +49,16 @@ public class PlayerEventHandler implements Listener {
         }
     }
 
-    //TODO: Add toggle for "kill all hunters" win condition
-    @EventHandler
-    public void hunterDeath(PlayerDeathEvent event) {
-        if(Compass.getPrey() != null && !event.getEntity().equals(Bukkit.getPlayer(Compass.getPrey()))) {
-            UUID hunter = event.getEntity().getUniqueId();
-            if(Compass.getAliveHunters().contains(hunter)) {
-                Compass.removeAliveHunter(hunter);
-            }
-        }
-    }
-
-    //TODO: Check if they are still in the list of "alive" hunters and respawn them accordingly
-    //TODO: Add toggle for "kill all hunters" win condition
     @EventHandler
     public void hunterRespawn(PlayerRespawnEvent event) {
-        if(Compass.getPrey() != null && !event.getPlayer().equals(Bukkit.getPlayer(Compass.getPrey()))) {
-            Compass.giveCompass(event.getPlayer(), Bukkit.getPlayer(Compass.getPrey()));
+        if(WinConditions.getCondition() != 3) {
+            if (Compass.getPrey() != null) {
+                if(!event.getPlayer().equals(Bukkit.getPlayer(Compass.getPrey()))) {
+                    Compass.giveCompass(event.getPlayer(), Bukkit.getPlayer(Compass.getPrey()));
+                } else {
+                    event.getPlayer().setGameMode(GameMode.SPECTATOR);
+                }
+            }
         }
     }
 }

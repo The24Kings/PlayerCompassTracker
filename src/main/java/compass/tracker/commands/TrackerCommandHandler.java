@@ -2,6 +2,7 @@ package compass.tracker.commands;
 
 import compass.tracker.Compass;
 import compass.tracker.GUIHandler;
+import compass.tracker.WinConditions;
 import compass.tracker.utils.NickUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -25,18 +26,18 @@ public class TrackerCommandHandler implements CommandExecutor {
                 Compass.reset();
                 Compass.clearInv();
             }
-            //TODO: Add enable number and set to 1-5 depending on which command the player sends
+
             if(args[0].equals("enable")) {
                 if (args[1].equalsIgnoreCase("mine_diamond_ore")) {
-
+                    WinConditions.setCondition(0);
                 } else if (args[1].equalsIgnoreCase("enter_nether")) {
-
+                    WinConditions.setCondition(1);
                 } else if (args[1].equalsIgnoreCase("enter_end")) {
-
+                    WinConditions.setCondition(2);
                 } else if (args[1].equalsIgnoreCase("kill_all_hunters")) {
-
+                    WinConditions.setCondition(3);
                 } else if (args[1].equalsIgnoreCase("kill_ender_dragon")) {
-
+                    WinConditions.setCondition(4);
                 } else sender.sendMessage(ChatColor.RED + "The condition listed does not exist!");
             }
         }
