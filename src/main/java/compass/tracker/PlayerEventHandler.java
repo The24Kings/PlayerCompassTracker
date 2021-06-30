@@ -29,11 +29,13 @@ public class PlayerEventHandler implements Listener {
     //Updates Prey's location while Prey is moving
     @EventHandler
     public void updateCompass(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        Player prey = Bukkit.getPlayer(Compass.getPrey());
-        if (prey != null && prey.isOnline()) {
-            if(prey.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
-                player.setCompassTarget(Bukkit.getPlayer(Compass.getPrey()).getLocation());
+        if(Compass.getPrey() != null) {
+            Player player = event.getPlayer();
+            Player prey = Bukkit.getPlayer(Compass.getPrey());
+            if (prey.isOnline()) {
+                if (prey.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
+                    player.setCompassTarget(Bukkit.getPlayer(Compass.getPrey()).getLocation());
+                }
             }
         }
     }
