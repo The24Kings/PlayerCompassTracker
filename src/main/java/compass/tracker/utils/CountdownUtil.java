@@ -19,26 +19,29 @@ public class CountdownUtil {
                     int finalNum = num; //Runnable wants a "final" esc int so num cannot be used
                     String count = String.valueOf(num);
 
-                    Bukkit.getScheduler().runTaskLater(CompassTracker.getPlugin(), () -> { //Maybe find a better way to switch colors?
+                    Bukkit.getScheduler().runTaskLater(CompassTracker.getPlugin(), () -> {
                         if (Compass.getPrey() != null) { //Checks if Prey died during countdown
-                            if (finalNum > 6) {
-                                online.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + count));
-                            } else if (finalNum > 3) {
-                                online.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.YELLOW + count));
-                            } else {
-                                online.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + count));
-                            }
-                            online.getWorld().playSound(online.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 10, 1);
+                            setColor(online, ChatColor.GREEN, count, finalNum <= 10 && finalNum >= 7);
+                            setColor(online, ChatColor.YELLOW, count, finalNum <= 6 && finalNum >= 4);
+                            setColor(online, ChatColor.RED, count, finalNum <= 3);
+
+                            online.getWorld().playSound(online.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 5, 1);
                         }
                     }, delay);
                 }
                 Bukkit.getScheduler().runTaskLater(CompassTracker.getPlugin(), () -> {
                     if (Compass.getPrey() != null) { //Checks if Prey died during countdown
                         online.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + "BEGIN"));
-                        online.getWorld().playSound(online.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 1);
+                        online.getWorld().playSound(online.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 5, 1);
                     }
                 }, 20 * 10); //Waits til count down is done
             }
         });
+    }
+
+    public static void setColor(Player online, ChatColor color, String count, boolean condition) {
+        if(condition) {
+            online.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(color + count));
+        }
     }
 }

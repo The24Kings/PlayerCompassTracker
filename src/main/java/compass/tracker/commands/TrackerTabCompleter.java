@@ -17,11 +17,11 @@ public class TrackerTabCompleter implements TabCompleter {
             parameters.add("enable");
         }
         if(args.length > 1 && args[0].equalsIgnoreCase("enable")) {
-            parameters.add("mine_diamond_ore");
-            parameters.add("enter_nether");
+            parameters.add("kill_ender_dragon"); //Untested
+            parameters.add("kill_all_hunters"); //Untested
             parameters.add("enter_end");
-            parameters.add("kill_all_hunters");
-            parameters.add("kill_ender_dragon");
+            parameters.add("enter_nether");
+            parameters.add("mine_diamond_ore");
         }
 
         return parameters;

@@ -15,14 +15,16 @@ import org.bukkit.inventory.ItemStack;
 public class PlayerEventHandler implements Listener {
     @EventHandler
     public void getPreyY(PlayerInteractEvent event) {
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-            if (!event.hasItem() || !event.getItem().getItemMeta().hasDisplayName()) return;
-            Player player = event.getPlayer();
-            Player prey = Bukkit.getPlayer(Compass.getPrey());
+        if(Compass.getPrey() != null) {
+            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                if (!event.hasItem() || !event.getItem().getItemMeta().hasDisplayName()) return;
+                Player player = event.getPlayer();
+                Player prey = Bukkit.getPlayer(Compass.getPrey());
 
-            if (prey != null && prey.isOnline()) {
-                player.sendMessage(ChatColor.DARK_GREEN + "Current Y" + ChatColor.RESET + ": " + (int) Math.floor(prey.getLocation().getY()));
-            } else player.sendMessage(ChatColor.DARK_RED + "Could not find player!");
+                if (prey.isOnline()) {
+                    player.sendMessage(ChatColor.DARK_GREEN + "Current Y" + ChatColor.RESET + ": " + (int) Math.floor(prey.getLocation().getY()));
+                } else player.sendMessage(ChatColor.DARK_RED + "Could not find player!");
+            }
         }
     }
 
@@ -43,18 +45,20 @@ public class PlayerEventHandler implements Listener {
     //Doesn't allow Prey to pickup Compass
     @EventHandler
     public void compassPickup(PlayerAttemptPickupItemEvent event) {
-        ItemStack item = event.getItem().getItemStack();
-        if(event.getPlayer().equals(Bukkit.getPlayer(Compass.getPrey()))) {
-            if(item.getType().equals(Material.COMPASS) && item.getItemMeta().hasDisplayName()) {
-                event.setCancelled(true);
+        if(Compass.getPrey() != null) {
+            ItemStack item = event.getItem().getItemStack();
+            if (event.getPlayer().equals(Bukkit.getPlayer(Compass.getPrey()))) {
+                if (item.getType().equals(Material.COMPASS) && item.getItemMeta().hasDisplayName()) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
 
     @EventHandler
     public void hunterRespawn(PlayerRespawnEvent event) {
-        if(WinConditions.getCondition() != 3) {
-            if (Compass.getPrey() != null) {
+        if (Compass.getPrey() != null) {
+            if(WinConditions.getCondition() != 3) {
                 if(!event.getPlayer().equals(Bukkit.getPlayer(Compass.getPrey()))) {
                     Compass.giveCompass(event.getPlayer(), Bukkit.getPlayer(Compass.getPrey()));
                 } else {

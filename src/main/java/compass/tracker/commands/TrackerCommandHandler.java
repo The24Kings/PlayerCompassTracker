@@ -30,14 +30,19 @@ public class TrackerCommandHandler implements CommandExecutor {
             if(args[0].equals("enable")) {
                 if (args[1].equalsIgnoreCase("mine_diamond_ore")) {
                     WinConditions.setCondition(0);
+                    sender.sendMessage(ChatColor.GREEN + "Successfully changed win condition to:" + ChatColor.RESET + " mine_diamond_ore");
                 } else if (args[1].equalsIgnoreCase("enter_nether")) {
                     WinConditions.setCondition(1);
+                    sender.sendMessage(ChatColor.GREEN + "Successfully changed win condition to:" + ChatColor.RESET + " enter_nether");
                 } else if (args[1].equalsIgnoreCase("enter_end")) {
                     WinConditions.setCondition(2);
+                    sender.sendMessage(ChatColor.GREEN + "Successfully changed win condition to:" + ChatColor.RESET + " enter_end");
                 } else if (args[1].equalsIgnoreCase("kill_all_hunters")) {
                     WinConditions.setCondition(3);
+                    sender.sendMessage(ChatColor.GREEN + "Successfully changed win condition to:" + ChatColor.RESET + " kill_all_hunters");
                 } else if (args[1].equalsIgnoreCase("kill_ender_dragon")) {
                     WinConditions.setCondition(4);
+                    sender.sendMessage(ChatColor.GREEN + "Successfully changed win condition to:" + ChatColor.RESET + " kill_ender_dragon");
                 } else sender.sendMessage(ChatColor.RED + "The condition listed does not exist!");
             }
         }

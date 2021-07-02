@@ -11,13 +11,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class WinConditions implements Listener {
-    private static int condition = 0;
+    private static int condition = 0; //Default "Obtain Diamond"
 
     public static void setCondition(int select) {
         condition = select;
@@ -38,7 +39,7 @@ public class WinConditions implements Listener {
                         10);
             } else {
                 player.sendTitle( //(fadeIn, stay, fadeOut) - in ticks
-                        ChatColor.GOLD + "" + ChatColor.BOLD + "HUNTERS WIN",
+                        ChatColor.GREEN + "" + ChatColor.BOLD + "HUNTERS WIN",
                         "",
                         10,
                         20 * 3,
@@ -55,7 +56,7 @@ public class WinConditions implements Listener {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             if(Compass.getPrey() != null && player.getUniqueId().equals(Compass.getPrey())) { //Shouldn't be null but internal error could occur
                 player.sendTitle( //(fadeIn, stay, fadeOut) - in ticks
-                        ChatColor.GOLD + "" + ChatColor.BOLD + "PREY WINS",
+                        ChatColor.GREEN + "" + ChatColor.BOLD + "PREY WINS",
                         "",
                         10,
                         20 * 3,
@@ -68,6 +69,7 @@ public class WinConditions implements Listener {
                         20 * 3,
                         10);
             }
+            player.getWorld().playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
         }
         NickUtil.resetPreyNick();
         Compass.reset();
@@ -127,11 +129,11 @@ public class WinConditions implements Listener {
 
     //Prey wins when they reach the Nether/ End
     @EventHandler
-    public void preyEnterNether(EntityPortalEvent event) {
+    public void preyLeaveOverworld(PlayerChangedWorldEvent event) {
         if(condition == 1 || condition == 2) {
             if (Compass.getPrey() != null) {
-                Entity prey = Bukkit.getPlayer(Compass.getPrey());
-                if (event.getEntity().equals(prey)) {
+                Player prey = Bukkit.getPlayer(Compass.getPrey());
+                if (event.getPlayer().equals(prey)) {
                     if (condition == 1) {
                         if (prey.getWorld().getEnvironment().equals(World.Environment.NETHER)) { //Check if entered Dimension is the Nether
                             Bukkit.getScheduler().runTaskLater(CompassTracker.getPlugin(), WinConditions::preyWin, 20);
